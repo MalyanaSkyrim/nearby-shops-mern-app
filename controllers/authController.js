@@ -45,5 +45,44 @@ exports.signin = async (req, res, next) => {
 };
 
 exports.signup = async (req, res, next) => {
-  return res.json('Signup');
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const { name, email, password, nickname } = req.body;
+  try {
+    let user = await User.findOne({ email });
+    if (user) {
+      return res.status(400).json({ errors: [{ msg: 'user already exists' }] });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const cryptedPassword = await bcrypt.hash(password, salt);
+
+    user = new User({
+      name,
+      email,
+      nickname,
+      password: cryptedPassword
+    });
+
+    await user.save();
+    const payload = {
+      userId: user.id
+    };
+    jwt.sign(
+      payload,
+      config.get('jwtSecret'),
+      {
+        expiresIn: 360000
+      },
+      (err, token) => {
+        if (err) throw err;
+        return res.json({ token });
+      }
+    );
+  } catch (err) {
+    return res.status(500).json({ errors: [{ msg: 'Server Error' }] });
+  }
 };
