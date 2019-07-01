@@ -2,14 +2,17 @@ const express = require('express');
 const { check } = require('express-validator/check');
 const authController = require('../controllers/authController');
 const User = require('../models/User');
-
+const isAuth = require('../middleware/is-Auth');
 const router = express.Router();
+
+router.get('/profile', isAuth, authController.getProfile);
+
 router.post(
   '/signin',
   [
-    check('email', 'Please enter a valid email')
-      .isEmail()
-      .normalizeEmail(),
+    check('username', 'username is required')
+      .not()
+      .isEmpty(),
     check('password')
       .isAlphanumeric()
       .withMessage('Password must be Alphanumeric')
@@ -22,18 +25,17 @@ router.post(
 router.post(
   '/signup',
   [
-    check('nickname', 'nickname is required')
+    check('username', 'username is required')
       .not()
       .isEmpty()
-      .custom(async (nickname, { req }) => {
+      .custom(async (username, { req }) => {
         const user = await User.findOne({
-          nickname
+          username
         });
         if (user) {
-          return Promise.reject('This nickname is already used');
+          return Promise.reject('This username is already used');
         }
-      })
-      .normalizeEmail(),
+      }),
     check('email', 'Please enter a valid email')
       .isEmail()
       .custom(async (email, { req }) => {
@@ -43,12 +45,13 @@ router.post(
         if (user) {
           return Promise.reject('This email is already used');
         }
-      }),
+      })
+      .normalizeEmail(),
     check('password', 'Password must be Alphanumeric with 6 char in minimum')
       .isAlphanumeric()
       .isLength({ min: 6 }),
-    check('confirmPassword').custom((confirmPasswoed, { req }) => {
-      if (confirmPasswoed !== req.body.password) {
+    check('confirmPassword').custom((confirmPassword, { req }) => {
+      if (confirmPassword !== req.body.password) {
         throw new Error('Password have to match');
       }
       return true;

@@ -10,6 +10,7 @@
   "author": "MALYANA Mohamed",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.19.0",
     "bcrypt": "^3.0.6",
     "config": "^3.1.0",
     "express": "^4.17.1",

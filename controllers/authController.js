@@ -11,8 +11,8 @@ exports.signin = async (req, res, next) => {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
+    const { username, password } = req.body;
+    const user = await User.findOne({ username });
 
     if (!user) {
       return res.status(400).json({ errors: [{ msg: 'Invalid credentials' }] });
@@ -24,7 +24,7 @@ exports.signin = async (req, res, next) => {
     }
 
     const payload = {
-      userId: user.id
+      user: { id: user.id, username: user.username }
     };
 
     jwt.sign(
@@ -50,7 +50,8 @@ exports.signup = async (req, res, next) => {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const { name, email, password, nickname } = req.body;
+  const { username, email, password } = req.body;
+
   try {
     let user = await User.findOne({ email });
     if (user) {
@@ -61,15 +62,14 @@ exports.signup = async (req, res, next) => {
     const cryptedPassword = await bcrypt.hash(password, salt);
 
     user = new User({
-      name,
       email,
-      nickname,
+      username,
       password: cryptedPassword
     });
 
     await user.save();
     const payload = {
-      userId: user.id
+      user: { id: user.id, username: user.username }
     };
     jwt.sign(
       payload,
@@ -83,6 +83,24 @@ exports.signup = async (req, res, next) => {
       }
     );
   } catch (err) {
+    console.log(err);
+    return res.status(500).json({ errors: [{ msg: 'Server Error' }] });
+  }
+};
+
+exports.getProfile = async (req, res, next) => {
+  try {
+    console.log(req.user);
+    const user = await User.findOne({ username: req.user.username }).select(
+      '-password'
+    );
+    if (user) {
+      return res.json({ user });
+    } else {
+      return res.status(400).json({ errors: [{ msg: "user doesn't exists" }] });
+    }
+  } catch (err) {
+    console.log(err);
     return res.status(500).json({ errors: [{ msg: 'Server Error' }] });
   }
 };

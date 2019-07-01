@@ -6,6 +6,14 @@ const app = express();
 connectDB();
 
 app.use(express.json({ extended: false }));
+app.use(function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, auth-token'
+  );
+  next();
+});
 
 const authRoutes = require('./routes/authRoutes');
 const shopsRoutes = require('./routes/shopsRoutes');
