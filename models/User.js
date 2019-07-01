@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
@@ -19,23 +19,47 @@ const userSchema = new Schema({
   },
   favoriteShops: [
     {
-      shopId: {
-        type: Schema.Types.ObjectId,
-        ref: 'Shop',
+      id: {
+        type: String,
+        require: true,
+        unique: true
+      },
+      shopName: {
+        type: String,
         required: true
+      },
+      location: {
+        type: String
+      },
+      imgUrl: {
+        type: String
       }
     }
   ],
 
   dislikedShops: [
     {
-      shopId: {
-        type: Schema.Types.ObjectId,
-        ref: 'Shop',
+      id: {
+        type: String,
+        require: true,
+        unique: true
+      },
+      shopName: {
+        type: String,
         required: true
+      },
+      location: {
+        type: String
+      },
+      imgUrl: {
+        type: String
+      },
+      disliked_at: {
+        type: Date,
+        require: true
       }
     }
   ]
 });
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model("User", userSchema);
