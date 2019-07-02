@@ -17,12 +17,13 @@ exports.getNearbyShops = async (req, res, next) => {
     const user = await User.findOne({ username: req.user.username });
     const likedShops = user.favoriteShops.map(shop => shop.id);
 
-    const allDislikedShops = user.dislikedShops.map(shop => shop.id);
     const currentDate = new Date();
 
-    const dislikedShops = allDislikedShops.filter(
-      shop => Math.abs(shop.date - currentDate) / (1000 * 60 * 60) < 2
-    );
+    const dislikedShops = user.dislikedShops
+      .filter(
+        shop => Math.abs(shop.disliked_at - currentDate) / (1000 * 60 * 60) < 2
+      )
+      .map(shop => shop.id);
 
     const nearbyShops = response.data.results.items.filter(
       shop => !likedShops.includes(shop.id) && !dislikedShops.includes(shop.id)

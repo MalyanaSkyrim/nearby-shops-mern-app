@@ -1,0 +1,13 @@
+.crop-photo {
+  border: 1px dashed rgb(192, 192, 192);
+  padding: 10px;
+  text-align: center;
+}
+.cropped-photo {
+  max-width: 250px;
+  margin: auto;
+}
+
+.cropped-photo > img {
+  height: auto;
+}

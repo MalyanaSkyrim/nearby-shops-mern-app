@@ -1,8 +1,8 @@
-const { validationResult } = require('express-validator');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
-const config = require('config');
-const User = require('../models/User');
+const { validationResult } = require("express-validator");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+const config = require("config");
+const User = require("../models/User");
 
 exports.signin = async (req, res, next) => {
   try {
@@ -15,12 +15,12 @@ exports.signin = async (req, res, next) => {
     const user = await User.findOne({ username });
 
     if (!user) {
-      return res.status(400).json({ errors: [{ msg: 'Invalid credentials' }] });
+      return res.status(400).json({ errors: [{ msg: "Invalid credentials" }] });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ errors: [{ msg: 'Invalid credentials' }] });
+      return res.status(400).json({ errors: [{ msg: "Invalid credentials" }] });
     }
 
     const payload = {
@@ -29,7 +29,7 @@ exports.signin = async (req, res, next) => {
 
     jwt.sign(
       payload,
-      config.get('jwtSecret'),
+      config.get("jwtSecret"),
       {
         expiresIn: 3600
       },
@@ -40,7 +40,7 @@ exports.signin = async (req, res, next) => {
     );
   } catch (err) {
     console.log(err.message);
-    return res.status(500).json({ errors: [{ msg: 'Server Error' }] });
+    return res.status(500).json({ errors: [{ msg: "Server Error" }] });
   }
 };
 
@@ -55,7 +55,7 @@ exports.signup = async (req, res, next) => {
   try {
     let user = await User.findOne({ email });
     if (user) {
-      return res.status(400).json({ errors: [{ msg: 'user already exists' }] });
+      return res.status(400).json({ errors: [{ msg: "user already exists" }] });
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -73,7 +73,7 @@ exports.signup = async (req, res, next) => {
     };
     jwt.sign(
       payload,
-      config.get('jwtSecret'),
+      config.get("jwtSecret"),
       {
         expiresIn: 360000
       },
@@ -84,7 +84,7 @@ exports.signup = async (req, res, next) => {
     );
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ errors: [{ msg: 'Server Error' }] });
+    return res.status(500).json({ errors: [{ msg: "Server Error" }] });
   }
 };
 
@@ -92,7 +92,7 @@ exports.getProfile = async (req, res, next) => {
   try {
     console.log(req.user);
     const user = await User.findOne({ username: req.user.username }).select(
-      '-password'
+      "-password"
     );
     if (user) {
       return res.json({ user });
@@ -101,6 +101,27 @@ exports.getProfile = async (req, res, next) => {
     }
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ errors: [{ msg: 'Server Error' }] });
+    return res.status(500).json({ errors: [{ msg: "Server Error" }] });
+  }
+};
+
+exports.updateProfile = async (req, res, next) => {
+  try {
+    const sendedUser = req.body;
+    const user = await User.findById(sendedUser._id);
+
+    if (sendedUser.username && user.username !== sendedUser.username)
+      user.username = sendedUser.username;
+    user.email = sendedUser.email || user.email;
+    user.phoneNumber = sendedUser.phoneNumber || user.phoneNumber;
+    user.birthday = sendedUser.birthday || user.birthday;
+    user.prefix = sendedUser.prefix || user.prefix;
+    user.photo = sendedUser.photo || user.photo;
+    await user.save();
+
+    return res.json({ msg: "User updated" });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json(err);
   }
 };
