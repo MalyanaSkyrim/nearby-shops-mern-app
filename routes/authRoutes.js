@@ -60,4 +60,6 @@ router.post(
   authController.signup
 );
 
+router.post('/profile', isAuth, authController.updateProfile);
+
 module.exports = router;

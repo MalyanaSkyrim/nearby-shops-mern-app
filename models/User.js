@@ -17,6 +17,29 @@ const userSchema = new Schema({
     type: String,
     required: true
   },
+  birthday: {
+    type: Date
+  },
+  phoneNumber: {
+    type: String
+  },
+  photo: {
+    originalPhoto: {
+      type: String
+    },
+    croppedPhoto: {
+      type: String
+    },
+    crop: {}
+  },
+  prefix: {
+<<<<<<< HEAD
+    type: String
+=======
+    type: String,
+    default: "212"
+>>>>>>> c390b41... bug fix, datepicker and update profile
+  },
   favoriteShops: [
     {
       id: {
@@ -34,7 +57,8 @@ const userSchema = new Schema({
       imgUrl: {
         type: String
       }
-    }
+    },
+    { _id: false }
   ],
 
   dislikedShops: [
@@ -58,7 +82,8 @@ const userSchema = new Schema({
         type: Date,
         require: true
       }
-    }
+    },
+    { _id: false }
   ]
 });
 

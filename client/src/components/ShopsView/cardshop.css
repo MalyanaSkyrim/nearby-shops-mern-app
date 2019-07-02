@@ -1,0 +1,70 @@
+.card-shop {
+  background-color: white;
+  box-shadow: 4px 4px 4px rgb(134, 134, 134);
+  border-radius: 4px;
+  text-align: center;
+  width: 250px;
+  padding: 8px;
+  display: inline-block;
+  margin: 10px;
+  min-height: 300px;
+}
+
+img {
+  height: auto;
+  width: 80%;
+  border-radius: 4px;
+}
+
+.like {
+  color: green;
+}
+
+.dislike {
+  color: red;
+}
+
+.like,
+.dislike {
+  display: inline-block;
+  margin: 8px;
+  margin-bottom: 0;
+  padding: 4px;
+  cursor: pointer;
+  border: 1px solid rgba(209, 209, 209, 0.664);
+  border-radius: 4px;
+}
+
+.like:hover,
+.dislike:hover {
+  background-color: rgba(221, 221, 221, 0.253);
+}
+
+.msg-global {
+  margin: 10px;
+  padding: 20px;
+  text-align: center;
+  color: rgb(61, 177, 255);
+  border: 1px solid rgb(61, 177, 255, 0.38);
+  background-color: rgba(83, 244, 255, 0.171);
+  border-radius: 6px;
+}
+
+@media (max-width: 830px) {
+  .card-shop {
+    width: 30%;
+    min-height: 20vw;
+  }
+}
+
+@media (max-width: 680px) {
+  .card-shop {
+    width: 40%;
+  }
+}
+
+@media (max-width: 520px) {
+  .card-shop {
+    width: 250px;
+  }
+}

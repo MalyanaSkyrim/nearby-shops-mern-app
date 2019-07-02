@@ -1,0 +1,21 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background-color: #eeeeee;
+}
+
+.container {
+  max-width: 1200px;
+  margin: auto;
+  height: 90vh;
+}
+
+.list-shops {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
