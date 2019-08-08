@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import "antd/dist/antd.css";
 import NavBar from "./components/NavBar";
@@ -7,42 +7,37 @@ import PreferredShops from "./components/ShopsView/PreferredShops";
 import Signin from "./components/Account/Signin";
 import Signup from "./components/Account/Signup";
 import { loadUser } from "./state_management/actions/accountAction";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 
 import "./App.css";
 import PrivateRoute from "./Private/PrivateRoute";
 import EditProfile from "./components/Account/EditProfile";
 
-class App extends Component {
-  state = {
-    loadingUser: true
-  };
+const App = () => {
+  const [loadingUser, setIsLoading] = useState(true);
+  const dispatch = useDispatch();
 
-  componentWillMount = async () => {
-    await this.props.loadUser();
-    this.setState({ loadingUser: false });
-  };
+  const loadCurrentUser = () => dispatch(loadUser());
 
-  render() {
-    const { loadingUser } = this.state;
-    return (
-      !loadingUser && (
-        <Router>
-          <NavBar />
-          <div className="container">
-            <Route exact path="/" component={NearbyShops} />
-            <PrivateRoute exact path="/favorite" component={PreferredShops} />
-            <Route exact path="/signin" component={Signin} />
-            <Route exact path="/signup" component={Signup} />
-            <Route exact path="/profile" component={EditProfile} />
-          </div>
-        </Router>
-      )
-    );
-  }
-}
+  useEffect(() => {
+    loadCurrentUser();
+    setIsLoading(false);
+  }, []);
 
-export default connect(
-  null,
-  { loadUser }
-)(App);
+  return (
+    !loadingUser && (
+      <Router>
+        <NavBar />
+        <div className="container">
+          <Route exact path="/" component={NearbyShops} />
+          <PrivateRoute exact path="/favorite" component={PreferredShops} />
+          <Route exact path="/signin" component={Signin} />
+          <Route exact path="/signup" component={Signup} />
+          <PrivateRoute exact path="/profile" component={EditProfile} />
+        </div>
+      </Router>
+    )
+  );
+};
+
+export default App;

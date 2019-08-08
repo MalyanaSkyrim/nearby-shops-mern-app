@@ -33,12 +33,8 @@ const userSchema = new Schema({
     crop: {}
   },
   prefix: {
-<<<<<<< HEAD
-    type: String
-=======
     type: String,
     default: "212"
->>>>>>> c390b41... bug fix, datepicker and update profile
   },
   favoriteShops: [
     {

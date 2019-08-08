@@ -5,7 +5,7 @@ import store from "../state_management/store";
 const instance = axios.create({});
 =======
 const instance = axios.create({
-  // baseURL: "http://localhost:5000"
+  baseURL: "http://localhost:5000"
 });
 >>>>>>> c390b41... bug fix, datepicker and update profile
 

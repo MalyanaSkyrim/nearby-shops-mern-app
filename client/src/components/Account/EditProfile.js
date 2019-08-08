@@ -1,6 +1,6 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Icon, Input, Button, Select, DatePicker, Modal } from "antd";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { updateProfile } from "../../state_management/actions/accountAction";
 import moment from "moment";
 import "antd/dist/antd.css";
@@ -9,24 +9,25 @@ import UploadCropPhoto from "../EditProfilePhoto/UploadCropPhoto";
 
 const { Option } = Select;
 
-class EditProfileForm extends Component {
-  state = {
-    globalErr: [],
-    submitDisabled: true,
-    visible: false,
-    originalPhoto: undefined,
-    croppedPhoto: undefined,
-    crop: {}
-  };
+const EditProfileForm = props => {
+  const dispatch = useDispatch();
+  const updateUser = data => dispatch(updateProfile(data));
+  const user = useSelector(state => state.account.user);
 
-  handleSubmit = e => {
+  const [globalErr, setGlobalErr] = useState([]);
+  const [submitDisabled, setSubmitDisabled] = useState(true);
+  const [visible, setVisible] = useState(false);
+  const [originalPhoto, setOriginalPhoto] = useState(undefined);
+  const [croppedPhoto, setCroppedPhoto] = useState(undefined);
+  const [crop, setCrop] = useState({});
+
+  const handleSubmit = e => {
     e.preventDefault();
-    this.props.form.validateFields(async (err, values) => {
-      const user = this.props.user;
+    props.form.validateFields(async (err, values) => {
       const { username, email, phoneNumber, prefix, birthday } = values;
       const formatBirthday = birthday.format("YYYY-MM-DD");
       if (!err) {
-        const errors = await this.props.updateProfile({
+        const errors = await updateUser({
           ...user,
           username,
           email,
@@ -35,20 +36,23 @@ class EditProfileForm extends Component {
           prefix
         });
         if (errors) {
-          return this.setState({ globalErr: errors });
+          return setGlobalErr(errors);
         }
 
-        return this.setState({ submitDisabled: true });
+        return setSubmitDisabled(true);
       }
     });
   };
 
-  handleChange = e => {
+  const handleChange = e => {
     const isDatePicker = new Date(e).toString() !== "Invalid Date";
+<<<<<<< HEAD
     const user = this.props.user;
 <<<<<<< HEAD
     user.birthday = user.birthday.substring(0, 10);
 =======
+=======
+>>>>>>> 8f19607... replace App and Account components by functional
 
     if (user.birthday) user.birthday = user.birthday.substring(0, 10);
 >>>>>>> c390b41... bug fix, datepicker and update profile
@@ -58,12 +62,16 @@ class EditProfileForm extends Component {
       phoneNumber,
       prefix,
       birthday
+<<<<<<< HEAD
     } = this.props.form.getFieldsValue();
 <<<<<<< HEAD
     birthday = isDatePicker
       ? new Date(e).toISOString().substring(10)
       : new Date(birthday.format("MM-DD-YYYY")).toISOString().substring(0, 10);
 =======
+=======
+    } = props.form.getFieldsValue();
+>>>>>>> 8f19607... replace App and Account components by functional
 
 <<<<<<< HEAD
     if (birthday != null)
@@ -96,15 +104,12 @@ class EditProfileForm extends Component {
     };
     console.log({ updated: updatedUser.birthday, origin: user.birthday });
     if (JSON.stringify(updatedUser) === JSON.stringify(user))
-      this.setState({ submitDisabled: true });
-    else this.setState({ submitDisabled: false });
+      setSubmitDisabled(true);
+    else setSubmitDisabled(false);
   };
 
-  handleOk = async e => {
-    const { croppedPhoto, originalPhoto, crop } = this.state;
-    const user = this.props.user;
-
-    const errors = await this.props.updateProfile({
+  const handleOk = async e => {
+    const errors = await updateUser({
       ...user,
       photo: {
         ...user.photo,
@@ -115,36 +120,27 @@ class EditProfileForm extends Component {
     });
 
     if (errors) {
-      return this.setState({ globalErr: errors });
+      return setGlobalErr(errors);
     }
 
-    this.setState({
-      visible: false
-    });
+    setVisible(false);
   };
 
-  handleCancel = e => {
-    console.log(e);
-    this.setState({
-      visible: false,
-      croppedPhoto: undefined,
-      crop: {}
-    });
+  const handleCancel = e => {
+    setVisible(false);
+    setCroppedPhoto(undefined);
+    setCrop({});
   };
 
-  editPhoto = () => {
-    this.setState({
-      visible: true
-    });
+  const editPhoto = () => {
+    setVisible(true);
   };
 
-  handleCrop = (croppedImageData, crop) => {
-    this.setState({
-      croppedPhoto: croppedImageData,
-      crop: crop
-    });
+  const handleCrop = (croppedImageData, crop) => {
+    setCroppedPhoto(croppedImageData);
+    setCrop(crop);
   };
-  toDataURL = url =>
+  const toDataURL = url =>
     fetch(url)
       .then(response => response.blob())
       .then(
@@ -157,21 +153,22 @@ class EditProfileForm extends Component {
           })
       );
 
-  updateOriginalImage = newOriginalPhoto => {
-    this.setState({ originalPhoto: newOriginalPhoto });
+  const updateOriginalImage = newOriginalPhoto => {
+    setOriginalPhoto(newOriginalPhoto);
   };
 
-  componentWillMount = async () => {
-    const { photo } = this.props.user;
+  useEffect(async () => {
+    const { photo } = user;
     if (!photo) {
       return;
     }
-    const originalPhoto = await this.toDataURL(photo.originalPhoto);
+    const originalPhoto = await toDataURL(photo.originalPhoto);
 
     console.log("RESULT:", originalPhoto);
-    this.setState({ originalPhoto });
-  };
+    setOriginalPhoto(originalPhoto);
+  }, []);
 
+<<<<<<< HEAD
   render() {
     const { getFieldDecorator } = this.props.form;
     const {
@@ -192,111 +189,103 @@ class EditProfileForm extends Component {
         { type: "object", required: true, message: "Please select time!" }
       ]
     };
+=======
+  const { getFieldDecorator } = props.form;
+  const { username, phoneNumber, email, birthday, photo } = user;
+  console.log(birthday);
+  const config = {
+    initialValue: birthday ? moment(birthday, "YYYY-MM-DD") : null,
+    rules: [{ type: "object", required: true, message: "Please select time!" }]
+  };
+>>>>>>> 8f19607... replace App and Account components by functional
 
-    const prefixSelector = getFieldDecorator("prefix", {
-      initialValue: "212"
-    })(
-      <Select style={{ width: 80 }}>
-        <Option value="212">+212</Option>
-        <Option value="86">+86</Option>
-        <Option value="87">+87</Option>
-      </Select>
-    );
-    return (
-      <>
-        <h2 className="title-edit-profile">Edit your profile</h2>
-        <div className="edit-profile-content">
-          <div className="form-container">
-            <Form
-              onSubmit={this.handleSubmit}
-              onChange={this.handleChange}
-              className="edit-profile-form"
-            >
-              {globalErr.length !== 0 ? (
-                <p className="msg-err-global"> {globalErr[0].msg} </p>
-              ) : (
-                <></>
+  const prefixSelector = getFieldDecorator("prefix", {
+    initialValue: "212"
+  })(
+    <Select style={{ width: 80 }}>
+      <Option value="212">+212</Option>
+      <Option value="86">+86</Option>
+      <Option value="87">+87</Option>
+    </Select>
+  );
+  return (
+    <>
+      <h2 className="title-edit-profile">Edit your profile</h2>
+      <div className="edit-profile-content">
+        <div className="form-container">
+          <Form
+            onSubmit={handleSubmit}
+            onChange={handleChange}
+            className="edit-profile-form"
+          >
+            {globalErr.length !== 0 ? (
+              <p className="msg-err-global"> {globalErr[0].msg} </p>
+            ) : (
+              <></>
+            )}
+            <Form.Item className="form-label" label="Username" key="username">
+              {getFieldDecorator("username", {
+                initialValue: username,
+                rules: [
+                  { required: true, message: "Please input your username!" }
+                ]
+              })(
+                <Input
+                  prefix={
+                    <Icon type="user" style={{ color: "rgba(0,0,0,.25)" }} />
+                  }
+                  placeholder="Username"
+                />
               )}
-              <Form.Item className="form-label" label="Username" key="username">
-                {getFieldDecorator("username", {
-                  initialValue: username,
-                  rules: [
-                    { required: true, message: "Please input your username!" }
-                  ]
-                })(
-                  <Input
-                    prefix={
-                      <Icon type="user" style={{ color: "rgba(0,0,0,.25)" }} />
-                    }
-                    placeholder="Username"
-                  />
-                )}
-              </Form.Item>
-              <Form.Item className="form-label" label="E-mail">
-                {getFieldDecorator("email", {
-                  initialValue: email,
-                  rules: [
-                    {
-                      type: "email",
-                      message: "The input is not valid E-mail!"
-                    },
-                    {
-                      required: true,
-                      message: "Please input your E-mail!"
-                    }
-                  ]
-                })(<Input />)}
-              </Form.Item>
+            </Form.Item>
+            <Form.Item className="form-label" label="E-mail">
+              {getFieldDecorator("email", {
+                initialValue: email,
+                rules: [
+                  {
+                    type: "email",
+                    message: "The input is not valid E-mail!"
+                  },
+                  {
+                    required: true,
+                    message: "Please input your E-mail!"
+                  }
+                ]
+              })(<Input />)}
+            </Form.Item>
 
-              <Form.Item label="Phone Number">
-                {getFieldDecorator("phoneNumber", {
-                  initialValue: phoneNumber,
-                  rules: [
-                    {
-                      required: true,
-                      message: "Please input your phone number!"
-                    }
-                  ]
-                })(
-                  <Input
-                    addonBefore={prefixSelector}
-                    style={{ width: "100%" }}
-                  />
-                )}
-              </Form.Item>
-              <Form.Item label="birthday">
-                {getFieldDecorator("birthday", config)(
-                  <DatePicker onChange={this.handleChange} />
-                )}
-              </Form.Item>
+            <Form.Item label="Phone Number">
+              {getFieldDecorator("phoneNumber", {
+                initialValue: phoneNumber,
+                rules: [
+                  {
+                    required: true,
+                    message: "Please input your phone number!"
+                  }
+                ]
+              })(
+                <Input addonBefore={prefixSelector} style={{ width: "100%" }} />
+              )}
+            </Form.Item>
+            <Form.Item label="birthday">
+              {getFieldDecorator("birthday", config)(
+                <DatePicker onChange={handleChange} />
+              )}
+            </Form.Item>
 
-              <Form.Item className="form-label">
-                <Button
-                  type="primary"
-                  className="login-form-button"
-                  htmlType="submit"
-                  disabled={submitDisabled}
-                >
-                  Save
-                </Button>
-              </Form.Item>
-            </Form>
-          </div>
-          <div className="edit-profile-img">
-            <img
-              className="profile-img"
-              src={
-                croppedPhoto ||
-                (photo ? photo.croppedPhoto : undefined) ||
-                "/defaultAvatar.jpeg"
-              }
-            />
-            <span className="edit-img" onClick={this.editPhoto}>
-              {" "}
-              Edit Profile Photo
-            </span>
-          </div>
+            <Form.Item className="form-label">
+              <Button
+                type="primary"
+                className="login-form-button"
+                htmlType="submit"
+                disabled={submitDisabled}
+              >
+                Save
+              </Button>
+            </Form.Item>
+          </Form>
         </div>
+<<<<<<< HEAD
 
         <Modal
           className="edit-photo-modal"
@@ -317,14 +306,43 @@ class EditProfileForm extends Component {
     );
   }
 }
+=======
+        <div className="edit-profile-img">
+          <img
+            className="profile-img"
+            src={
+              croppedPhoto ||
+              (photo ? photo.croppedPhoto : undefined) ||
+              "/defaultAvatar.jpeg"
+            }
+          />
+          <span className="edit-img" onClick={editPhoto}>
+            {" "}
+            Edit Profile Photo
+          </span>
+        </div>
+      </div>
+      <Modal
+        className="edit-photo-modal"
+        title="Edit Profile Photo"
+        visible={visible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        okText="Save"
+        width="800px"
+      >
+        <UploadCropPhoto
+          photo={{ originalPhoto, crop: photo ? photo.crop : {} }}
+          handleCrop={handleCrop}
+          updateOriginalImage={updateOriginalImage}
+        />
+      </Modal>
+      %
+    </>
+  );
+};
+>>>>>>> 8f19607... replace App and Account components by functional
 
 const EditProfile = Form.create({ name: "normal_login" })(EditProfileForm);
 
-const mapStateToProps = state => ({
-  user: state.account.user
-});
-
-export default connect(
-  mapStateToProps,
-  { updateProfile }
-)(EditProfile);
+export default EditProfile;
