@@ -1,68 +1,63 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import CardShop from './CardShop';
-import './cardshop.css';
-import store from '../../state_management/store';
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import CardShop from "./CardShop";
+import "./cardshop.css";
 
 import {
   loadShops,
   likeShop,
   dislikeShop
-} from '../../state_management/actions/shopActions';
+} from "../../state_management/actions/shopActions";
 
-class NearbyShops extends Component {
-  state = {
-    error: undefined
+const NearbyShops = props => {
+  const [error, setError] = useState(undefined);
+  const dispatch = useDispatch();
+
+  const like = shop => dispatch(likeShop(shop));
+  const disLike = shop => dispatch(dislikeShop(shop));
+  const loadShopList = () => dispatch(loadShops());
+
+  const shops = useSelector(state => state.shop.shops);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const error = await loadShopList();
+
+      if (error) {
+        if (error.toString() === "[object PositionError]")
+          setError({
+            msg: "Allow access to location to show nearby shops to you"
+          });
+        else setError({ msg: "Internal Server Error" });
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const likeShops = shop => {
+    like(shop);
   };
 
-  componentWillMount = async () => {
-    console.log({ token: store.getState().account.token });
-    const error = await this.props.loadShops();
-    console.log(error);
-    if (error) {
-      if (error.toString() === '[object PositionError]')
-        this.setState({
-          error: { msg: 'Allow access to location to show nearby shops to you' }
-        });
-      else this.setState({ error: { msg: 'Internal Server Error' } });
-    }
+  const dislikeShops = shop => {
+    disLike(shop);
   };
 
-  likeShop = shop => {
-    this.props.likeShop(shop);
-  };
+  return (
+    <>
+      {error ? <p className="msg-err-global"> {error.msg} </p> : <></>}
+      <div className="list-shops">
+        {shops.map(shop => (
+          <CardShop
+            shopName={shop.shopName}
+            imgUrl={shop.imgUrl}
+            likeShop={() => likeShops(shop)}
+            dislikeShop={() => dislikeShops(shop)}
+          />
+        ))}
+      </div>
+    </>
+  );
+};
 
-  dislikeShop = shop => {
-    this.props.dislikeShop(shop);
-  };
-
-  render() {
-    const { shops } = this.props;
-    const { error } = this.state;
-
-    return (
-      <>
-        {error ? <p className='msg-err-global'> {error.msg} </p> : <></>}
-        <div className='list-shops'>
-          {shops.map(shop => (
-            <CardShop
-              shopName={shop.shopName}
-              imgUrl={shop.imgUrl}
-              likeShop={() => this.likeShop(shop)}
-              dislikeShop={() => this.dislikeShop(shop)}
-            />
-          ))}
-        </div>
-      </>
-    );
-  }
-}
-
-const mapStateToProps = state => ({
-  shops: state.shop.shops
-});
-
-export default connect(
-  mapStateToProps,
-  { loadShops, likeShop, dislikeShop }
-)(NearbyShops);
+export default NearbyShops;

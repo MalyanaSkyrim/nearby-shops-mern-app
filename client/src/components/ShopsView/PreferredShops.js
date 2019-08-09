@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import CardShop from "./CardShop";
 import "./cardshop.css";
 
@@ -8,35 +8,29 @@ import {
   loadFavoriteShops
 } from "../../state_management/actions/shopActions";
 
-class PreferredShops extends Component {
-  componentWillMount = async () => {
-    await this.props.loadFavoriteShops();
-  };
+const PreferredShops = () => {
+  const dispatch = useDispatch();
+  const likedShops = useSelector(state => state.shop.likedShops);
+  const loadLikdedShops = () => dispatch(loadFavoriteShops());
+  const deleteShop = shop => dispatch(removeShop(shop));
 
-  render() {
-    const { removeShop, likedShops } = this.props;
+  useEffect(() => {
+    loadLikdedShops();
+  }, []);
 
-    return likedShops.length === 0 ? (
-      <p className="msg-global"> No shop added to favoret yet </p>
-    ) : (
-      <div className="list-shops">
-        {likedShops.map(shop => (
-          <CardShop
-            shopName={shop.shopName}
-            imgUrl={shop.imgUrl}
-            removeShop={() => removeShop(shop)}
-          />
-        ))}
-      </div>
-    );
-  }
-}
+  return likedShops.length === 0 ? (
+    <p className="msg-global"> No shop added to favoret yet </p>
+  ) : (
+    <div className="list-shops">
+      {likedShops.map(shop => (
+        <CardShop
+          shopName={shop.shopName}
+          imgUrl={shop.imgUrl}
+          removeShop={() => deleteShop(shop)}
+        />
+      ))}
+    </div>
+  );
+};
 
-const mapStateToProps = state => ({
-  likedShops: state.shop.likedShops
-});
-
-export default connect(
-  mapStateToProps,
-  { removeShop, loadFavoriteShops }
-)(PreferredShops);
+export default PreferredShops;

@@ -10,7 +10,7 @@ import { loadUser } from "./state_management/actions/accountAction";
 import { useDispatch } from "react-redux";
 
 import "./App.css";
-import PrivateRoute from "./Private/PrivateRoute";
+import PrivateRoute from "./components/Private/PrivateRoute";
 import EditProfile from "./components/Account/EditProfile";
 
 const App = () => {
@@ -20,8 +20,12 @@ const App = () => {
   const loadCurrentUser = () => dispatch(loadUser());
 
   useEffect(() => {
-    loadCurrentUser();
-    setIsLoading(false);
+    const loadUserProfile = async () => {
+      await loadCurrentUser();
+      setIsLoading(false);
+    };
+
+    loadUserProfile();
   }, []);
 
   return (

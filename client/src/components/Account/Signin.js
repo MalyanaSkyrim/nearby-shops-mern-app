@@ -49,8 +49,8 @@ const NormalLoginForm = props => {
           });
           return;
         }
-        console.log(props);
-        props.history.push("/");
+
+        props.history.goBack();
       }
     });
   };

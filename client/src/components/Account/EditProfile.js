@@ -157,12 +157,12 @@ const EditProfileForm = props => {
     setOriginalPhoto(newOriginalPhoto);
   };
 
-  useEffect(async () => {
+  useEffect(() => {
     const { photo } = user;
     if (!photo) {
       return;
     }
-    const originalPhoto = await toDataURL(photo.originalPhoto);
+    const originalPhoto = toDataURL(photo.originalPhoto);
 
     console.log("RESULT:", originalPhoto);
     setOriginalPhoto(originalPhoto);
