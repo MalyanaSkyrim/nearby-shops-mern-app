@@ -93,7 +93,7 @@ class CropPhoto extends PureComponent {
         {src && (
           <ReactCrop
             width="100%"
-            imageStyle={{ maxWidth: "600px", height: "auto" }}
+            imageStyle={{ width: "100%", maxWidth: "600px", height: "auto" }}
             className="react-crop"
             src={src}
             crop={crop}
