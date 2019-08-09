@@ -7,7 +7,7 @@ const cors = require("cors");
 connectDB();
 
 app.use(cors());
-app.use(express.json({ extended: false }));
+app.use(express.json({ extended: false, limit: "50mb" }));
 app.use(function(req, res, next) {
   res.set({
     "Access-Control-Allow-Methods": "*",
@@ -27,17 +27,7 @@ const shopsRoutes = require("./routes/shopsRoutes");
 app.use("/api/auth", authRoutes);
 app.use("/api/shops", shopsRoutes);
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-if (process.env.NODE_ENV === 'production') {
-=======
-console.log(process.env.NODE_ENV);
 if (process.env.NODE_ENV === "production") {
->>>>>>> e0d57f7... add home page
-=======
-console.log(process.env.NODE_ENV);
-if (process.env.NODE_ENV === "production") {
->>>>>>> 97a0784... add home page
   // Serve any static files
   app.use(express.static(path.join(__dirname, "client/build")));
 

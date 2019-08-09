@@ -46,54 +46,19 @@ const EditProfileForm = props => {
 
   const handleChange = e => {
     const isDatePicker = new Date(e).toString() !== "Invalid Date";
-<<<<<<< HEAD
-    const user = this.props.user;
-<<<<<<< HEAD
-    user.birthday = user.birthday.substring(0, 10);
-=======
-=======
->>>>>>> 8f19607... replace App and Account components by functional
 
+    user.birthday = user.birthday.substring(0, 10);
     if (user.birthday) user.birthday = user.birthday.substring(0, 10);
->>>>>>> c390b41... bug fix, datepicker and update profile
+
     let {
       username,
       email,
       phoneNumber,
       prefix,
       birthday
-<<<<<<< HEAD
-    } = this.props.form.getFieldsValue();
-<<<<<<< HEAD
-    birthday = isDatePicker
-      ? new Date(e).toISOString().substring(10)
-      : new Date(birthday.format("MM-DD-YYYY")).toISOString().substring(0, 10);
-=======
-=======
     } = props.form.getFieldsValue();
->>>>>>> 8f19607... replace App and Account components by functional
 
-<<<<<<< HEAD
-    if (birthday != null)
-      birthday = isDatePicker
-        ? new Date(e)
-            .toLocaleDateString()
-            .split("/")
-            .reverse()
-            .join("-")
-            .substring(0, 10)
-        : new Date(birthday.format("MM-DD-YYYY"))
-            .toLocaleDateString()
-            .split("/")
-            .reverse()
-            .join("-")
-            .substring(0, 10);
->>>>>>> 8fc1b84... fix date format
-
-=======
-    if (isDatePicker) birthday = e;
-    console.log({ e });
->>>>>>> c390b41... bug fix, datepicker and update profile
+    if (isDatePicker) console.log({ e });
     const updatedUser = {
       ...user,
       username,
@@ -162,42 +127,20 @@ const EditProfileForm = props => {
     if (!photo) {
       return;
     }
-    const originalPhoto = toDataURL(photo.originalPhoto);
+    const setOriginalPht = async () => {
+      const originalPhoto = await toDataURL(photo.originalPhoto);
+      setOriginalPhoto(originalPhoto);
+    };
 
-    console.log("RESULT:", originalPhoto);
-    setOriginalPhoto(originalPhoto);
+    setOriginalPht();
   }, []);
 
-<<<<<<< HEAD
-  render() {
-    const { getFieldDecorator } = this.props.form;
-    const {
-      globalErr,
-      submitDisabled,
-      croppedPhoto,
-      originalPhoto
-    } = this.state;
-    const { username, phoneNumber, email, birthday, photo } = this.props.user;
-    console.log(birthday);
-    const config = {
-<<<<<<< HEAD
-      initialValue: birthday ? moment(new Date(birthday), "MM-DD-YYYY") : null,
-=======
-      initialValue: birthday ? moment(birthday, "YYYY-MM-DD") : null,
->>>>>>> c390b41... bug fix, datepicker and update profile
-      rules: [
-        { type: "object", required: true, message: "Please select time!" }
-      ]
-    };
-=======
   const { getFieldDecorator } = props.form;
   const { username, phoneNumber, email, birthday, photo } = user;
-  console.log(birthday);
   const config = {
     initialValue: birthday ? moment(birthday, "YYYY-MM-DD") : null,
     rules: [{ type: "object", required: true, message: "Please select time!" }]
   };
->>>>>>> 8f19607... replace App and Account components by functional
 
   const prefixSelector = getFieldDecorator("prefix", {
     initialValue: "212"
@@ -285,28 +228,6 @@ const EditProfileForm = props => {
             </Form.Item>
           </Form>
         </div>
-<<<<<<< HEAD
-
-        <Modal
-          className="edit-photo-modal"
-          title="Edit Profile Photo"
-          visible={this.state.visible}
-          onOk={this.handleOk}
-          onCancel={this.handleCancel}
-          okText="Save"
-          width="800px"
-        >
-          <UploadCropPhoto
-            photo={{ originalPhoto, crop: photo ? photo.crop : {} }}
-            handleCrop={this.handleCrop}
-            updateOriginalImage={this.updateOriginalImage}
-          />
-        </Modal>%
-      </>
-    );
-  }
-}
-=======
         <div className="edit-profile-img">
           <img
             className="profile-img"
@@ -337,11 +258,9 @@ const EditProfileForm = props => {
           updateOriginalImage={updateOriginalImage}
         />
       </Modal>
-      %
     </>
   );
 };
->>>>>>> 8f19607... replace App and Account components by functional
 
 const EditProfile = Form.create({ name: "normal_login" })(EditProfileForm);
 

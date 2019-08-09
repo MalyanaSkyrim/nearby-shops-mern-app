@@ -108,6 +108,7 @@ exports.getProfile = async (req, res, next) => {
 exports.updateProfile = async (req, res, next) => {
   try {
     const sendedUser = req.body;
+    const user = await User.findById(sendedUser._id);
 
     if (sendedUser.username && user.username !== sendedUser.username)
       user.username = sendedUser.username;
@@ -115,6 +116,7 @@ exports.updateProfile = async (req, res, next) => {
     user.phoneNumber = sendedUser.phoneNumber || user.phoneNumber;
     user.birthday = sendedUser.birthday || user.birthday;
     user.prefix = sendedUser.prefix || user.prefix;
+    user.photo = sendedUser.photo || user.photo;
     await user.save();
 
     return res.json({ msg: "User updated" });

@@ -22,7 +22,7 @@ const NavBar = props => {
   const handleClick = async e => {
     setCurrent(e.key);
     if (e.key === "logout") {
-      logOut();
+      await logOut();
       history.push("/signin");
     }
   };

@@ -24,7 +24,7 @@
 .profile-img {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
-  height: 100%;
+  width: 100%;
   max-height: 220px;
 }
 

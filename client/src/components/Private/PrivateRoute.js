@@ -1,17 +1,22 @@
-import React from "react";
+import React, { useContext } from "react";
+import { __RouterContext } from "react-router";
 import { Route, Redirect } from "react-router-dom";
-import Signin from "../Account/Signin";
 import { useSelector } from "react-redux";
+
+const useRouter = () => {
+  return useContext(__RouterContext);
+};
 
 const PrivateRoute = props => {
   const { component, ...restProps } = props;
   const Comp = component;
   const isAuthenticated = useSelector(state => state.account.isAuthenticated);
+  const { location } = useRouter();
 
   return isAuthenticated ? (
     <Route {...restProps} render={() => <Comp />} />
   ) : (
-    <Redirect to="/signin" />
+    <Redirect to={{ pathname: "/signin", lastPath: location.pathname }} />
   );
 };
 

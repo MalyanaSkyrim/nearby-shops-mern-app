@@ -12,7 +12,7 @@ const NormalLoginForm = props => {
   const dispatch = useDispatch();
 
   const signIn = data => dispatch(signin(data));
-
+  console.log(props.location);
   const handleSubmit = e => {
     e.preventDefault();
 
@@ -49,8 +49,11 @@ const NormalLoginForm = props => {
           });
           return;
         }
-
-        props.history.goBack();
+        if (props.location.lastPath) {
+          props.history.push(props.location.lastPath);
+        } else {
+          props.history.push("/");
+        }
       }
     });
   };
