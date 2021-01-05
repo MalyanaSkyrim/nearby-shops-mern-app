@@ -14,7 +14,7 @@
   "author": "MALYANA Mohamed",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "bcrypt": "^3.0.6",
     "concurrently": "^4.1.1",
     "config": "^3.1.0",
